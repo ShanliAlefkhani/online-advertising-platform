@@ -10,4 +10,6 @@ def index(request):
 
 
 def detail(request, object_id):
-    return redirect(Ad.objects.get(id=object_id).link)
+    ad = Ad.objects.get(id=object_id)
+    ad.clicks += 1
+    return redirect(ad.link)
