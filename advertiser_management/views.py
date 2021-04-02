@@ -17,5 +17,4 @@ def detail(request, object_id):
     ad = Ad.objects.get(id=object_id)
     ad.clicks += 1
     ad.save()
-    print(Ad.objects.get(id=object_id).clicks)
     return redirect(ad.link)
