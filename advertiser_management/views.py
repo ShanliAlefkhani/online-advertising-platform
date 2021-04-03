@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.urls import reverse
+
 from advertiser_management.models import Advertiser, Ad
 from django.shortcuts import redirect
 from .forms import AdForm
@@ -26,4 +28,7 @@ def ad_create_view(request):
     if form.is_valid():
         form.save()
     context = {'form': form}
-    return render(request, 'ad_create.html', context)
+    if request.method == 'GET':
+        return render(request, 'ad_create.html', context)
+    if request.method == 'POST':
+        return redirect(reverse('index'))
