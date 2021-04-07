@@ -43,3 +43,18 @@ class AdCreateView(View):
         if form.is_valid():
             form.save()
         return redirect(reverse('index'))
+
+
+class RecordView(View):
+    def get(self, request, *args, **kwargs):
+        clicks = Click.objects.all()
+        views = ViewModel.objects.all()
+        context = []
+        for time in clicks.datetimes(field_name='datetime', kind='hour'):
+            info = {
+                'time': time.hour,
+                'number_of_clicks': clicks.filter(datetime__hour=time.hour).count(),
+                'number_of_views': views.filter(datetime__hour=time.hour).count()
+            }
+            context.append(info)
+        return render(request, 'record.html', {'context': context})
