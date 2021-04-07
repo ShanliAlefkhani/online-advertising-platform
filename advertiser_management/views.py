@@ -1,27 +1,35 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from advertiser_management.models import Advertiser, Ad, Click, View as ViewModel
 from django.shortcuts import redirect
 from .forms import AdForm
 from datetime import datetime
 from django.views.generic import View
+from django.views.generic.base import TemplateView, RedirectView
 
 
-class IndexView(View):
-    def get(self, request, *args, **kwargs):
+class IndexView(TemplateView):
+    template_name = 'ads.html'
+
+    def get_context_data(self, **kwargs):
         advertisers = Advertiser.objects.all()
         for advertiser in advertisers:
             for ad in advertiser.ad_set.all():
                 ViewModel.objects.create(ad=ad, datetime=datetime.now(), ip="")
         context = {'advertisers': advertisers}
-        return render(request, 'ads.html', context)
+        return context
 
 
-class DetailView(View):
-    def get(self, request, object_id, *args, **kwargs):
-        ad = Ad.objects.get(id=object_id)
+class DetailView(RedirectView):
+
+    permanent = False
+    query_string = True
+    pattern_name = 'ad-detail'
+
+    def get_redirect_url(self, *args, **kwargs):
+        ad = get_object_or_404(Ad, id=kwargs['object_id'])
         Click.objects.create(ad=ad, datetime=datetime.now(), ip="")
-        return redirect(ad.link)
+        return ad.link
 
 
 class AdCreateView(View):
