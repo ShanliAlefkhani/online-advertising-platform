@@ -7,7 +7,21 @@
     <title>Record View</title>
 </head>
 <body>
-<h3> clicks / views: {{ clicks_views }}</h3>
+<h3> total clicks / views: {{ total_clicks_views }}</h3>
+<div class="container" dir="rtl">
+    {% for element in clicks_views %}
+        <div class="card mt-2 p-2">
+            <h5 class="card-title"> time: {{ element.time }}</h5>
+            <div class="card-body">
+                <div class="row">
+                   <div class="card-body">
+                       <h6> clicks / views: {{ element.number }} </h6>
+                   </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 <div class="container" dir="rtl">
     {% for element in context %}
         <div class="card mt-2 p-2">

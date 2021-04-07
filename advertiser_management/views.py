@@ -52,14 +52,34 @@ class RecordView(View):
         context = []
         total_clicks = 0
         total_views = 0
+        clicks_views = []
+
         for time in range(24):
-            total_clicks += clicks.filter(datetime__hour=time).count()
-            total_views += views.filter(datetime__hour=time).count()
+            clicks_count = clicks.filter(datetime__hour=time).count()
+            views_count = views.filter(datetime__hour=time).count()
+            total_clicks += clicks_count
+            total_views += views_count
+            number = 0
+            if views_count != 0:
+                number = (clicks_count / views_count).__round__(2)
+
+            clicks_views.append({
+                'time': time,
+                'number': number
+            })
+
             info = {
                 'time': time,
-                'number_of_clicks': clicks.filter(datetime__hour=time).count(),
-                'number_of_views': views.filter(datetime__hour=time).count()
+                'number_of_clicks': clicks_count,
+                'number_of_views': views_count
+
             }
             context.append(info)
+
+        sorted_clicks_views = sorted(clicks_views, key=lambda i: i['number'], reverse=True)
+
         return render(request, 'record.html',
-                      {'context': context, 'clicks_views': (total_clicks/total_views).__round__(2)})
+                      {'context': context,
+                       'total_clicks_views': (total_clicks / total_views).__round__(2),
+                       'clicks_views': sorted_clicks_views
+                       })
