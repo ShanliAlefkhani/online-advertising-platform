@@ -50,11 +50,11 @@ class RecordView(View):
         clicks = Click.objects.all()
         views = ViewModel.objects.all()
         context = []
-        for time in clicks.datetimes(field_name='datetime', kind='hour'):
+        for time in range(24):
             info = {
-                'time': time.hour,
-                'number_of_clicks': clicks.filter(datetime__hour=time.hour).count(),
-                'number_of_views': views.filter(datetime__hour=time.hour).count()
+                'time': time,
+                'number_of_clicks': clicks.filter(datetime__hour=time).count(),
+                'number_of_views': views.filter(datetime__hour=time).count()
             }
             context.append(info)
         return render(request, 'record.html', {'context': context})
