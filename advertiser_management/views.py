@@ -78,8 +78,15 @@ class RecordView(View):
 
         sorted_clicks_views = sorted(clicks_views, key=lambda i: i['number'], reverse=True)
 
+        sum_of_time = 0
+        print(sum_of_time)
+        for click in Click.objects.all():
+            sum_of_time += click.datetime.minute - ViewModel.objects.filter(ip=click.ip).first().datetime.minute
+        average = sum_of_time / Click.objects.all().count()
+
         return render(request, 'record.html',
                       {'context': context,
                        'total_clicks_views': (total_clicks / total_views).__round__(2),
-                       'clicks_views': sorted_clicks_views
+                       'clicks_views': sorted_clicks_views,
+                       'average': average
                        })
