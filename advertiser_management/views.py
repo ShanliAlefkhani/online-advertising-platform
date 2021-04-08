@@ -9,7 +9,6 @@ from django.views.generic import View
 
 class IndexView(View):
     def get(self, request, *args, **kwargs):
-        print(request.user.ip)
         advertisers = Advertiser.objects.all()
         for advertiser in advertisers:
             for ad in advertiser.ad_set.all():
@@ -20,7 +19,6 @@ class IndexView(View):
 
 class DetailView(View):
     def get(self, request, object_id, *args, **kwargs):
-        print(request.user.ip)
         ad = Ad.objects.get(id=object_id)
         Click.objects.create(ad=ad, datetime=datetime.now(), ip=request.user.ip)
         return redirect(ad.link)
