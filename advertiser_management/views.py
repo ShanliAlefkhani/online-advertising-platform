@@ -7,6 +7,16 @@ from django.views.generic import View
 from rest_framework import generics
 from .serializers import AdSerializer, AdvertiserSerializer
 
+from django.shortcuts import HttpResponse
+
+from .tasks import celery_task
+
+
+def celery_view(request):
+    for counter in range(2):
+        celery_task.delay(counter)
+    return HttpResponse("FINISH PAGE LOAD")
+
 
 class IndexView(generics.ListAPIView):
     queryset = Advertiser.objects.all()
@@ -24,7 +34,7 @@ class IndexView(generics.ListAPIView):
 class DetailView(View):
     def get(self, request, object_id, *args, **kwargs):
         ad = Ad.objects.get(id=object_id)
-        Click.objects.create(ad=ad, datetime=datetime.now(), ip=request.user.ip)
+        Click.objects.create(ad=ad, datetime=datetime.now(), ip=request.ip)
         return redirect(ad.link)
 
 
