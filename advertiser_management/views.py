@@ -2,19 +2,23 @@ from django.shortcuts import render
 from django.urls import reverse
 from advertiser_management.models import Advertiser, Ad, Click, View as ViewModel
 from django.shortcuts import redirect
-from .forms import AdForm
 from datetime import datetime
 from django.views.generic import View
+from rest_framework import generics
+from .serializers import AdSerializer, AdvertiserSerializer
 
 
-class IndexView(View):
+class IndexView(generics.ListAPIView):
+    queryset = Advertiser.objects.all()
+    serializer_class = AdvertiserSerializer
+
     def get(self, request, *args, **kwargs):
+        super().get(request, *args, **kwargs)
         advertisers = Advertiser.objects.all()
         for advertiser in advertisers:
             for ad in advertiser.ad_set.all():
-                ViewModel.objects.create(ad=ad, datetime=datetime.now(), ip=request.user.ip)
-        context = {'advertisers': advertisers}
-        return render(request, 'ads.html', context)
+                ViewModel.objects.create(ad=ad, datetime=datetime.now(), ip=request.ip)
+        return self.list(request, *args, **kwargs)
 
 
 class DetailView(View):
@@ -24,16 +28,12 @@ class DetailView(View):
         return redirect(ad.link)
 
 
-class AdCreateView(View):
-    def get(self, request, *args, **kwargs):
-        form = AdForm()
-        context = {'form': form}
-        return render(request, 'ad_create.html', context)
+class AdCreateView(generics.CreateAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdSerializer
 
-    def post(self, request, *args, **kwargs):
-        form = AdForm(request.POST or None)
-        if form.is_valid():
-            form.save()
+    def post(self, *args, **kwargs):
+        super().post(*args, **kwargs)
         return redirect(reverse('index'))
 
 

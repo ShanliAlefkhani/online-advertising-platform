@@ -8,6 +8,6 @@ class SaveIPAddressMiddleware:
             ip = x_forwarded_for.split(',')[0]
         else:
             ip = request.META.get('REMOTE_ADDR')
-        request.user.ip = ip
+        request.ip = ip
         response = self.get_response(request)
         return response
