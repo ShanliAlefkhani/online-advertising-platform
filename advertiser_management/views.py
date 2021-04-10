@@ -87,16 +87,13 @@ class ClicksAndViewsPerHourView(generics.ListAPIView):
 
         for time in range(24):
             if ClicksAndViewsPerHour.objects.count() == 24:
-                print(views.filter(datetime__hour=time+1).count())
-                clicks_and_views_per_hour = ClicksAndViewsPerHour.objects.filter(time=time+1).first()
-                clicks_and_views_per_hour.clicks_count = clicks.filter(datetime__hour=time+1).count()
-                clicks_and_views_per_hour.views_count = views.filter(datetime__hour=time+1).count()
+                clicks_and_views_per_hour = ClicksAndViewsPerHour.objects.filter(time=time).first()
+                clicks_and_views_per_hour.clicks_count = clicks.filter(datetime__hour=time).count()
+                clicks_and_views_per_hour.views_count = views.filter(datetime__hour=time).count()
                 clicks_and_views_per_hour.save()
             else:
-                print("salam")
-                ClicksAndViewsPerHour.objects.create(clicks_count=clicks.filter(datetime__hour=time+1).count(),
-                                                     views_count=views.filter(datetime__hour=time+1).count(),
-                                                     time=time+1)
+                ClicksAndViewsPerHour.objects.create(clicks_count=clicks.filter(datetime__hour=time).count(),
+                                                     views_count=views.filter(datetime__hour=time).count(), time=time)
 
         queryset = ClicksAndViewsPerHour.objects.all()
         return queryset
