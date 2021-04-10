@@ -23,3 +23,9 @@ class View(models.Model):
     ad = models.ForeignKey(Ad, on_delete=models.CASCADE)
     datetime = models.DateTimeField()
     ip = models.GenericIPAddressField()
+
+
+class ClicksAndViewsPerHour(models.Model):
+    clicks_count = models.PositiveIntegerField()
+    views_count = models.PositiveIntegerField()
+    time = models.PositiveIntegerField()

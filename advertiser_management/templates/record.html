@@ -23,20 +23,5 @@
         </div>
     {% endfor %}
 </div>
-<div class="container" dir="rtl">
-    {% for element in context %}
-        <div class="card mt-2 p-2">
-            <h5 class="card-title"> time: {{ element.time }}</h5>
-            <div class="card-body">
-                <div class="row">
-                   <div class="card-body">
-                       <h6> total clicks: {{ element.number_of_clicks }} </h6>
-                       <h6> total views: {{ element.number_of_views }} </h6>
-                   </div>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-</div>
 </body>
 </html>

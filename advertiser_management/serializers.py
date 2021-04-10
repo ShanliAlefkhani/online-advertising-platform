@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from advertiser_management.models import Advertiser, Ad, Click, View
+from advertiser_management.models import Advertiser, Ad, Click, View, ClicksAndViewsPerHour
 
 
 class AdvertiserSerializer(serializers.ModelSerializer):
@@ -23,4 +23,10 @@ class ClickSerializer(serializers.ModelSerializer):
 class ViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = View
+        fields = '__all__'
+
+
+class ClicksAndViewsPerHourSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClicksAndViewsPerHour
         fields = '__all__'

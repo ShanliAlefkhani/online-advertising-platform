@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.urls import reverse
-from advertiser_management.models import Advertiser, Ad, Click, View as ViewModel
+from advertiser_management.models import Advertiser, Ad, Click, View as ViewModel, ClicksAndViewsPerHour
 from django.shortcuts import redirect
 from datetime import datetime
 from django.views.generic import View
 from rest_framework import generics
-from .serializers import AdSerializer, AdvertiserSerializer
+from .serializers import AdSerializer, AdvertiserSerializer, ClicksAndViewsPerHourSerializer
 
 
 class IndexView(generics.ListAPIView):
@@ -41,7 +41,6 @@ class RecordView(View):
     def get(self, request, *args, **kwargs):
         clicks = Click.objects.all()
         views = ViewModel.objects.all()
-        context = []
         total_clicks = 0
         total_views = 0
         clicks_views = []
@@ -60,25 +59,40 @@ class RecordView(View):
                 'number': number
             })
 
-            info = {
-                'time': time,
-                'number_of_clicks': clicks_count,
-                'number_of_views': views_count
-
-            }
-            context.append(info)
-
         sorted_clicks_views = sorted(clicks_views, key=lambda i: i['number'], reverse=True)
 
         sum_of_time = 0
         print(sum_of_time)
         for click in Click.objects.all():
             sum_of_time += click.datetime.minute - ViewModel.objects.filter(ip=click.ip).first().datetime.minute
-        average = sum_of_time / Click.objects.all().count()
-
+        average = 0
+        if Click.objects.all().count() != 0:
+            average = sum_of_time / Click.objects.all().count()
+        total_clicks_views = 0
+        if total_views != 0:
+            total_clicks_views = (total_clicks / total_views).__round__(2)
         return render(request, 'record.html',
-                      {'context': context,
-                       'total_clicks_views': (total_clicks / total_views).__round__(2),
+                      {'total_clicks_views': total_clicks_views,
                        'clicks_views': sorted_clicks_views,
                        'average': average
                        })
+
+
+class ClicksAndViewsPerHourView(generics.ListAPIView):
+    serializer_class = ClicksAndViewsPerHourSerializer
+
+    def get_queryset(self):
+        clicks = Click.objects.all()
+        views = ViewModel.objects.all()
+
+        for time in range(24):
+            if ClicksAndViewsPerHour.objects.count() == 24:
+                clicks_and_views_per_hour = ClicksAndViewsPerHour.objects.filter(time=time).first()
+                clicks_and_views_per_hour.clicks_count = clicks.filter(datetime__hour=time).count()
+                clicks_and_views_per_hour.views_count = views.filter(datetime__hour=time).count()
+            else:
+                ClicksAndViewsPerHour.objects.create(clicks_count=clicks.filter(datetime__hour=time).count(),
+                                                     views_count=views.filter(datetime__hour=time).count(), time=time)
+
+        queryset = ClicksAndViewsPerHour.objects.all()
+        return queryset
