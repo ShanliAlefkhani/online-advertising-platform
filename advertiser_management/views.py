@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.urls import reverse
-from advertiser_management.models import Advertiser, Ad, Click, View as ViewModel, ClicksAndViewsPerHour
+from advertiser_management.models import Advertiser, Ad, Click, View as ViewModel, ClicksAndViewsPerHour, \
+    ClicksAndViewsPerDay
 from django.shortcuts import redirect
 from datetime import datetime
 from django.views.generic import View
 from rest_framework import generics
-from .serializers import AdSerializer, AdvertiserSerializer, ClicksAndViewsPerHourSerializer
+from .serializers import AdSerializer, AdvertiserSerializer, ClicksAndViewsPerHourSerializer, \
+    ClicksAndViewsPerDaySerializer
 
 
 class IndexView(generics.ListAPIView):
@@ -82,19 +84,7 @@ class ClicksAndViewsPerHourView(generics.ListAPIView):
     serializer_class = ClicksAndViewsPerHourSerializer
     queryset = ClicksAndViewsPerHour.objects.all()
 
-    # def get_queryset(self):
-        # clicks = Click.objects.all()
-        # views = ViewModel.objects.all()
 
-        # for time in range(24):
-        #     if ClicksAndViewsPerHour.objects.count() == 24:
-        #         clicks_and_views_per_hour = ClicksAndViewsPerHour.objects.filter(time=time).first()
-        #         clicks_and_views_per_hour.clicks_count = clicks.filter(datetime__hour=time).count()
-        #         clicks_and_views_per_hour.views_count = views.filter(datetime__hour=time).count()
-        #         clicks_and_views_per_hour.save()
-        #     else:
-        #         ClicksAndViewsPerHour.objects.create(clicks_count=clicks.filter(datetime__hour=time).count(),
-        #                                              views_count=views.filter(datetime__hour=time).count(), time=time)
-
-        # queryset = ClicksAndViewsPerHour.objects.all()
-        # return queryset
+class ClicksAndViewsPerDayView(generics.ListAPIView):
+    serializer_class = ClicksAndViewsPerDaySerializer
+    queryset = ClicksAndViewsPerDay.objects.all()

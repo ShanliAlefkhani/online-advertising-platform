@@ -131,4 +131,8 @@ CELERY_BEAT_SCHEDULE = {
          'task': 'advertiser_management.tasks.save_clicks_and_views_per_hour',
          'schedule': crontab(hour='*/1'),
         },
+    'save-clicks-and-view-per-day': {
+         'task': 'advertiser_management.tasks.save_clicks_and_views_per_day',
+         'schedule': crontab(hour='*/24'),
+        },
 }

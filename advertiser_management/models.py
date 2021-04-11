@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 
 
 class Advertiser(models.Model):
@@ -26,11 +25,21 @@ class View(models.Model):
     ip = models.GenericIPAddressField()
 
 
-class ClicksAndViewsPerHour(models.Model):
+class Summary(models.Model):
     clicks_count = models.PositiveIntegerField()
     views_count = models.PositiveIntegerField()
+
+    class Meta:
+        abstract = True
+
+
+class ClicksAndViewsPerHour(Summary):
     datetime = models.DateTimeField()
 
     def save(self, *args, **kwargs):
         self.datetime = self.datetime.replace(minute=0, second=0, microsecond=0)
         super(ClicksAndViewsPerHour, self).save(*args, **kwargs)
+
+
+class ClicksAndViewsPerDay(Summary):
+    date = models.DateField()
