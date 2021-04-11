@@ -80,20 +80,21 @@ class RecordView(View):
 
 class ClicksAndViewsPerHourView(generics.ListAPIView):
     serializer_class = ClicksAndViewsPerHourSerializer
+    queryset = ClicksAndViewsPerHour.objects.all()
 
-    def get_queryset(self):
-        clicks = Click.objects.all()
-        views = ViewModel.objects.all()
+    # def get_queryset(self):
+        # clicks = Click.objects.all()
+        # views = ViewModel.objects.all()
 
-        for time in range(24):
-            if ClicksAndViewsPerHour.objects.count() == 24:
-                clicks_and_views_per_hour = ClicksAndViewsPerHour.objects.filter(time=time).first()
-                clicks_and_views_per_hour.clicks_count = clicks.filter(datetime__hour=time).count()
-                clicks_and_views_per_hour.views_count = views.filter(datetime__hour=time).count()
-                clicks_and_views_per_hour.save()
-            else:
-                ClicksAndViewsPerHour.objects.create(clicks_count=clicks.filter(datetime__hour=time).count(),
-                                                     views_count=views.filter(datetime__hour=time).count(), time=time)
+        # for time in range(24):
+        #     if ClicksAndViewsPerHour.objects.count() == 24:
+        #         clicks_and_views_per_hour = ClicksAndViewsPerHour.objects.filter(time=time).first()
+        #         clicks_and_views_per_hour.clicks_count = clicks.filter(datetime__hour=time).count()
+        #         clicks_and_views_per_hour.views_count = views.filter(datetime__hour=time).count()
+        #         clicks_and_views_per_hour.save()
+        #     else:
+        #         ClicksAndViewsPerHour.objects.create(clicks_count=clicks.filter(datetime__hour=time).count(),
+        #                                              views_count=views.filter(datetime__hour=time).count(), time=time)
 
-        queryset = ClicksAndViewsPerHour.objects.all()
-        return queryset
+        # queryset = ClicksAndViewsPerHour.objects.all()
+        # return queryset
